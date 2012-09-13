@@ -1,68 +1,55 @@
 package com.mashltd.rebatdb
 
 import java.sql.{Connection, DriverManager, ResultSet}
+import org.squeryl.Session
+import org.squeryl.SessionFactory
+import org.squeryl.adapters.MySQLAdapter
+import org.squeryl.PrimitiveTypeMode._
 
 object Mysql {
   private var _connection_string = ""
   private var _connection:Connection = null
 
   def initialize() {
-    _connection_string = String.format("jdbc:mysql://%s/%s?user=%s&password=%s", Configuration.mysql_url, Configuration.mysql_dbname, Configuration.mysql_dbuser, Configuration.mysql_dbpassword)
+    _connection_string = String.format("jdbc:mysql://%s/%s", Configuration.mysql_url, Configuration.mysql_dbname)
 
     connect()
 
-    initTables()
+    println("Checking schema...")
+    if(!checkSchemaExistance){
+      generateSchema()
+    } else {
+      println("Schema OK!")
+    }
   }
 
-  def readQuery(sql_query:String) : ResultSet = {
-    if(_connection.isClosed) {
-      connect()
-    }
+  private def connect():Unit = {
+    Class.forName("com.mysql.jdbc.Driver")
+    _connection = DriverManager.getConnection(_connection_string, Configuration.mysql_dbuser, Configuration.mysql_dbpassword)
+    SessionFactory.concreteFactory = Some(() => Session.create(_connection, new MySQLAdapter))
+  }
 
+  private def generateSchema() {
+    transaction {
+      println("Creating schema...")
+      Graph.create
+      println("Schema created successfully")
+    }
+  }
+
+  private def checkSchemaExistance:Boolean = {
     try {
       // Configure to be Read Only
       val statement = _connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
 
-      return statement.executeQuery(sql_query)
+      var rs = statement.executeQuery("SHOW TABLES LIKE 'Edges';")
+
+      return rs.next.asInstanceOf[Boolean]
     }
     catch {
       case ex: Exception => {
-        close()
-        println(ex)
-        return null
+        return false
       }
     }
-  }
-
-  def writeQuery(sql_query:String) = {
-    if(_connection.isClosed) {
-      connect()
-    }
-
-    try {
-      // Configure to be Read Only
-      val statement = _connection.createStatement()
-
-      statement.executeUpdate(sql_query)
-    }
-    catch {
-      case ex: Exception => {
-        close()
-        println(ex)
-      }
-    }
-  }
-
-  def close() {
-    _connection.close
-  }
-
-  private def connect() {
-    Class.forName("com.mysql.jdbc.Driver")
-    _connection = DriverManager.getConnection(_connection_string)
-  }
-
-  private def initTables() {
-    val rs = writeQuery("CREATE TABLE IF NOT EXISTS edges (from_entity_id INT NOT NULL, from_entity_type VARCHAR(255) NOT NULL, to_entity_id INT NOT NULL, to_entity_type VARCHAR(255) NOT NULL, weight INT NOT NULL, relation_id INT NOT NULL, INDEX from_entity (from_entity_id, from_entity_type, relation_id), INDEX to_entity (to_entity_id, to_entity_type, relation_id));")
   }
 }
