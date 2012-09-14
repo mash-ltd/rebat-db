@@ -9,5 +9,15 @@ class Edge (val from_entity_id: Long,
             val weight: Long,
             val relation_id: Long) {
 
-  def this() = this(0, "", 0, "", 0, 0)    
+  def this() = this(0, "", 0, "", 0, 0)   
+
+  def toThrift:com.mashltd.rebatdb.thrift.Edge = {
+    return null
+  }
+}
+
+object Edge {
+  def fromThrift(thriftEdge:com.mashltd.rebatdb.thrift.Edge):Edge = {
+    return null
+  }
 }

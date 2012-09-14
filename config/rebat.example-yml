@@ -3,3 +3,4 @@ development:
   mysql_dbname: "rebat_development"
   mysql_dbuser: "root"
   mysql_dbpassword: ""
+  port: 2011

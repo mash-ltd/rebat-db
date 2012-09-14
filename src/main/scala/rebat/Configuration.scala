@@ -9,6 +9,7 @@ object Configuration {
   private var _mysql_dbname = ""
   private var _mysql_dbuser = ""
   private var _mysql_dbpassword = ""
+  private var _port:Int = 2011
 
   def parseConfiguration() {
     val config_file = new FileInputStream(new File("config/rebat.yml"))
@@ -20,6 +21,7 @@ object Configuration {
     _mysql_dbname = conf.get("mysql_dbname")
     _mysql_dbuser = conf.get("mysql_dbuser")
     _mysql_dbpassword = conf.get("mysql_dbpassword")
+    _port = conf.get("port").asInstanceOf[Int]
 
     Mysql.initialize()
   }
@@ -38,5 +40,9 @@ object Configuration {
 
   def mysql_dbpassword:String = {
     return _mysql_dbpassword
+  }
+
+  def port:Int = {
+    return _port
   }
 }
