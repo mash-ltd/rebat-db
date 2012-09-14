@@ -1,7 +1,10 @@
 package com.mashltd.rebatdb
 
+import java.util.List
 import org.squeryl.Schema
 import org.squeryl.PrimitiveTypeMode._
+import scala.collection.JavaConversions._
+import com.mashltd.rebatdb.thrift.QueryType
 
 object Graph extends Schema {
   val edges = table[Edge]("Edges")
@@ -10,4 +13,84 @@ object Graph extends Schema {
     columns(ed.from_entity_id, ed.from_entity_type, ed.relation_id) are(indexed),
     columns(ed.to_entity_id, ed.to_entity_type, ed.relation_id) are(indexed)
   ))
+
+  def addEdge(edge:com.mashltd.rebatdb.thrift.Edge):Boolean = {
+    try {
+      edges.insert(Edge.fromThrift(edge))
+      return true
+    } catch {
+      case e:Exception => return false
+    }
+  }
+
+  def deleteEdge(edge:com.mashltd.rebatdb.thrift.Edge):Boolean = {
+    try {
+      edges.deleteWhere (ed => 
+        (
+          (
+            ed.from_entity_id === edge.fromEntityId.?
+            and 
+            ed.from_entity_type === edge.fromEntityType.?
+          ) or (
+            ed.to_entity_id === edge.toEntityId.?
+            and
+            ed.to_entity_type === edge.toEntityType.?
+          ) and
+          ed.relation_id === edge.relationId
+        )
+      )
+      return true
+    } catch {
+      case e:Exception => return false
+    }
+  }
+
+  def updateEdgeWeight(edge:com.mashltd.rebatdb.thrift.Edge, weight:Long):Boolean = {
+    try {
+      update(edges) (ed => 
+        where(
+          ed.from_entity_id === edge.fromEntityId and 
+          ed.from_entity_type === edge.fromEntityType and 
+          ed.to_entity_id === edge.toEntityId and
+          ed.to_entity_type === edge.toEntityType and
+          ed.relation_id === edge.relationId
+        )
+
+        set(ed.weight:= weight)
+      )
+      return true
+    } catch {
+      case e:Exception => return false
+    }
+  }
+
+  def selectEdges(query_list:List[com.mashltd.rebatdb.thrift.Query]):List[com.mashltd.rebatdb.thrift.Edge] = {
+    var select_query = from(edges)(ed => 
+      select(ed)
+      orderBy(ed.weight desc)
+    )
+
+    query_list.foreach(query => 
+      query.qtype match {
+        case QueryType.WHERE => 
+          select_query = select_query.where(ed => 
+            ed.from_entity_id   === query.edge.fromEntityId.? and
+            ed.from_entity_type === query.edge.fromEntityType.? and
+            ed.to_entity_id     === query.edge.toEntityId.? and
+            ed.to_entity_type   === query.edge.toEntityType.? and
+            ed.relation_id      === query.edge.relationId
+          )
+        case QueryType.UNION =>
+          select_query = select_query.union(select_query.where(ed =>
+            ed.from_entity_id   === query.edge.fromEntityId.? and
+            ed.from_entity_type === query.edge.fromEntityType.? and
+            ed.to_entity_id     === query.edge.toEntityId.? and
+            ed.to_entity_type   === query.edge.toEntityType.? and
+            ed.relation_id      === query.edge.relationId
+          ))
+      }
+    )    
+
+    return select_query.toList.map[com.mashltd.rebatdb.thrift.Edge, scala.collection.immutable.List[com.mashltd.rebatdb.thrift.Edge]](ed => ed.toThrift)//.asInstanceOf[java.util.List[com.mashltd.rebatdb.thrift.Edge]]
+  }
 }

@@ -9,12 +9,21 @@ struct Edge {
   6: optional i64     relationId;
 }
 
+enum QueryType {
+  WHERE,
+  INTERSECT,
+  UNION,
+  NOT
+}
+
+struct Query {
+  1: required Edge      edge;
+  2: optional QueryType qtype = QueryType.WHERE;
+}
+
 service RebatDB {
   bool        addQuery(1:Edge edge);
-  bool        removeQuery(1:Edge edge);
+  bool        deleteQuery(1:Edge edge);
   bool        updateWeightQuery(1:Edge edge, 2:i64 weight);
-  list<Edge>  whereQuery(1:Edge edge);
-  list<Edge>  intersectQuery(1:Edge edge);
-  list<Edge>  notQuery(1:Edge edge);
-  list<Edge>  unionQuery(1:Edge edge);
+  list<Edge>  selectQuery(1:list<Query> queryList);
 }

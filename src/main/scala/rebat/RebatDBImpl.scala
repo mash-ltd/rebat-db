@@ -5,30 +5,18 @@ import org.apache.thrift.TException
 
 class RebatDBImpl extends com.mashltd.rebatdb.thrift.RebatDB.Iface {
   def addQuery(edge:com.mashltd.rebatdb.thrift.Edge):Boolean = {
-    return false
+    return Graph.addEdge(edge)
   }
 
-  def removeQuery(edge:com.mashltd.rebatdb.thrift.Edge):Boolean = {
-    return false
+  def deleteQuery(edge:com.mashltd.rebatdb.thrift.Edge):Boolean = {
+    return Graph.deleteEdge(edge)
   }
 
   def updateWeightQuery(edge:com.mashltd.rebatdb.thrift.Edge, weight:Long):Boolean = {
-    return false
+    return Graph.updateEdgeWeight(edge, weight)
   }
 
-  def whereQuery(edge:com.mashltd.rebatdb.thrift.Edge):List[com.mashltd.rebatdb.thrift.Edge] = {
-    return null
-  }
-
-  def intersectQuery(edge:com.mashltd.rebatdb.thrift.Edge):List[com.mashltd.rebatdb.thrift.Edge] = {
-    return null
-  }
-
-  def notQuery(edge:com.mashltd.rebatdb.thrift.Edge):List[com.mashltd.rebatdb.thrift.Edge] = {
-    return null
-  }
-
-  def unionQuery(edge:com.mashltd.rebatdb.thrift.Edge):List[com.mashltd.rebatdb.thrift.Edge] = {
-    return null
+  def selectQuery(query_list:List[com.mashltd.rebatdb.thrift.Query]):List[com.mashltd.rebatdb.thrift.Edge] = {
+    return Graph.selectEdges(query_list)
   }
 }
