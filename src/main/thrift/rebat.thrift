@@ -1,4 +1,5 @@
 namespace java com.mashltd.rebatdb.thrift
+namespace rb rebat.thrift
 
 struct Edge {
   1: optional i64     fromEntityId; 

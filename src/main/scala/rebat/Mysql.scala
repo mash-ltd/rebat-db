@@ -8,7 +8,6 @@ import org.squeryl.PrimitiveTypeMode._
 
 object Mysql {
   private var _connection_string = ""
-  private var _connection:Connection = null
 
   def initialize() {
     _connection_string = String.format("jdbc:mysql://%s/%s", Configuration.mysql_url, Configuration.mysql_dbname)
@@ -25,8 +24,7 @@ object Mysql {
 
   private def connect():Unit = {
     Class.forName("com.mysql.jdbc.Driver")
-    _connection = DriverManager.getConnection(_connection_string, Configuration.mysql_dbuser, Configuration.mysql_dbpassword)
-    SessionFactory.concreteFactory = Some(() => Session.create(_connection, new MySQLAdapter))
+    SessionFactory.concreteFactory = Some(() => Session.create(DriverManager.getConnection(_connection_string, Configuration.mysql_dbuser, Configuration.mysql_dbpassword), new MySQLAdapter))
   }
 
   private def generateSchema() {
@@ -40,11 +38,13 @@ object Mysql {
   private def checkSchemaExistance:Boolean = {
     try {
       // Configure to be Read Only
-      val statement = _connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
+      transaction {
+        val statement = Session.currentSession.connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)
 
-      var rs = statement.executeQuery("SHOW TABLES LIKE 'Edges';")
+        var rs = statement.executeQuery("SHOW TABLES LIKE 'Edges';")
 
-      return rs.next.asInstanceOf[Boolean]
+        return rs.next.asInstanceOf[Boolean]
+      }
     }
     catch {
       case ex: Exception => {
