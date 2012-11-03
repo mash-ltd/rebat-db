@@ -2,9 +2,9 @@ namespace java com.mashltd.rebatdb.thrift
 namespace rb rebat.thrift
 
 struct Edge {
-  1: optional i64     fromEntityId; 
+  1: optional string     fromEntityId; 
   2: optional string  fromEntityType; 
-  3: optional i64     toEntityId; 
+  3: optional string     toEntityId; 
   4: optional string  toEntityType; 
   5: optional i64     weight = 0;
   6: optional i64     relationId;
@@ -27,4 +27,5 @@ service RebatDB {
   bool        deleteQuery(1:Edge edge);
   bool        updateWeightQuery(1:Edge edge, 2:i64 weight);
   list<Edge>  selectQuery(1:list<Query> queryList);
+  bool        truncate();
 }

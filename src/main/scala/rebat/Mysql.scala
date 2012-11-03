@@ -22,6 +22,25 @@ object Mysql {
     }
   }
 
+  def truncateTable:Boolean = {
+    try {
+      // Configure to be Read Only
+      transaction {
+        val statement = Session.currentSession.connection.createStatement()
+
+        statement.executeQuery("TRUNCATE TABLE edges;")
+
+        return true
+      }
+    }
+    catch {
+      case ex: Exception => {
+        println(ex)
+        return false
+      }
+    }
+  }
+
   private def connect():Unit = {
     Class.forName("com.mysql.jdbc.Driver")
     SessionFactory.concreteFactory = Some(() => Session.create(DriverManager.getConnection(_connection_string, Configuration.mysql_dbuser, Configuration.mysql_dbpassword), new MySQLAdapter))

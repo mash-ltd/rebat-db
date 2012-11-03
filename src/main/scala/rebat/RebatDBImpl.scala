@@ -19,4 +19,8 @@ class RebatDBImpl extends com.mashltd.rebatdb.thrift.RebatDB.Iface {
   def selectQuery(query_list:List[com.mashltd.rebatdb.thrift.Query]):List[com.mashltd.rebatdb.thrift.Edge] = {
     return Graph.selectEdges(query_list)
   }
+
+  def truncate():Boolean = {
+    return Graph.truncate
+  }
 }

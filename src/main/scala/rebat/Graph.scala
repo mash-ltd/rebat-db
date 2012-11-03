@@ -108,4 +108,8 @@ object Graph extends Schema {
         return null
     }
   }
+
+  def truncate:Boolean = {
+    return Mysql.truncateTable
+  }
 }
