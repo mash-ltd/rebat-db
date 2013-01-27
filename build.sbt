@@ -2,6 +2,8 @@ import atd.sbtthrift.ThriftPlugin
 
 seq(ThriftPlugin.thriftSettings: _*)
 
+seq(com.github.retronym.SbtOneJar.oneJarSettings: _*)
+
 name := "Rebat DB"
 
 organization := "com.mashltd"
@@ -9,6 +11,8 @@ organization := "com.mashltd"
 version := "0.1.0-SNAPSHOT"
 
 scalaVersion := "2.9.2"
+
+mainClass in oneJar := Some("com.mashltd.rebatdb.Rebat")
 
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "1.12" % "test",
