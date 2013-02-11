@@ -9,6 +9,12 @@ import ch.qos.logback.core.FileAppender
 import ch.qos.logback.core.status.InfoStatus
 import ch.qos.logback.core.status.StatusManager
 
+
+// Much of the code was take from loglady's
+// https://github.com/dln/loglady/blob/master/src/main/scala/org/eintr/loglady/Logger.scala
+// 
+//
+// Provides a single point for logging
 object Log {
   protected lazy val logger = LoggerFactory.getLogger("rebat-db").asInstanceOf[ch.qos.logback.classic.Logger]
   
