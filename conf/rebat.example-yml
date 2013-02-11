@@ -1,0 +1,6 @@
+mysql_url:    "localhost:3306"
+mysql_dbname: "rebat_development"
+mysql_dbuser: "root"
+mysql_dbpassword: ""
+port: 2011
+log_file: "/var/log/rebat-db/rebat.log"

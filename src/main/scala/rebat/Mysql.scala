@@ -14,11 +14,11 @@ object Mysql {
 
     connect()
 
-    println("Checking schema...")
+    Log.info("Checking schema...")
     if(!checkSchemaExistance){
       generateSchema()
     } else {
-      println("Schema OK!")
+      Log.info("Schema OK!")
     }
   }
 
@@ -35,7 +35,7 @@ object Mysql {
     }
     catch {
       case ex: Exception => {
-        println(ex)
+        Log.error(ex, "Mysql query runtime exception")
         return false
       }
     }
@@ -48,9 +48,9 @@ object Mysql {
 
   private def generateSchema() {
     transaction {
-      println("Creating schema...")
+      Log.info("Creating schema...")
       Graph.create
-      println("Schema created successfully")
+      Log.info("Schema created successfully")
     }
   }
 

@@ -22,7 +22,7 @@ object Graph extends Schema {
       return true
     } catch {
       case e:Exception => 
-        println(e)
+        Log.error(e, "Squeryl runtime exception")
         return false
     }
   }
@@ -43,7 +43,7 @@ object Graph extends Schema {
       }
     } catch {
       case e:Exception => 
-        println(e)
+        Log.error(e, "Squeryl runtime exception")
         return false
     }
   }
@@ -66,7 +66,7 @@ object Graph extends Schema {
       }
     } catch {
       case e:Exception => 
-        println(e)
+        Log.error(e, "Squeryl runtime exception")
         return false
     }
   }
@@ -104,7 +104,7 @@ object Graph extends Schema {
       }
     } catch {
       case e:Exception => 
-        println(e)
+        Log.error(e, "Squeryl runtime exception")
         return null
     }
   }

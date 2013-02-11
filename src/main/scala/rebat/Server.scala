@@ -16,7 +16,7 @@ object Server {
       val processor:RebatDB.Processor[RebatDBImpl] = new RebatDB.Processor(new RebatDBImpl());
       val server:TServer = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
-      println("Listening on port %d ...".format(Configuration.port));
+      Log.info("Listening on port %d ...".format(Configuration.port));
       server.serve();
     } catch {
       case e:TTransportException => e.printStackTrace()
