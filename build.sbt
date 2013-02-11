@@ -10,7 +10,7 @@ name := "rebat-db"
 
 organization := "com.mashltd"
 
-version := "0.1.0-SNAPSHOT"
+version := "0.1.0"
 
 scalaVersion := "2.9.2"
 
@@ -18,7 +18,7 @@ mainClass in oneJar := Some("com.mashltd.rebatdb.Rebat")
 
 jswMainClass in Dist := "com.mashltd.rebatdb.Rebat"
 
-configSourceDirs in Dist <<= baseDirectory map { base => Seq(base / "config")}
+configSourceDirs in Dist <<= baseDirectory map { base => Seq(base / "conf")}
 
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2" % "1.12" % "test",

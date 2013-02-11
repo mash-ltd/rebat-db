@@ -104,7 +104,7 @@ object Log {
 
     val pl:PatternLayoutEncoder = new PatternLayoutEncoder()
     pl.setContext(lc)
-    pl.setPattern("%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n")
+    pl.setPattern("%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n")
     pl.start()
     
     fa.setEncoder(pl)
