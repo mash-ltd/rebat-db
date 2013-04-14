@@ -28,7 +28,7 @@ object Mysql {
       transaction {
         val statement = Session.currentSession.connection.createStatement()
 
-        statement.executeQuery("TRUNCATE TABLE edges;")
+        statement.executeUpdate("TRUNCATE TABLE edges;")
 
         return true
       }
